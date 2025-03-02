@@ -43,4 +43,22 @@ const apiKey = process.env.OPENWEATHERMAP_API_KEY;
 // THE FOLLOWING FUNCTION IS UNSAFE, AND IS ONLY TO CHECK TO SEE IF THE APIKEY IS WORKING
 console.log('API key loaded: ', apiKey); 
 
+app.get('/api/weatherTest', async (req, res, next) => {
+	try{
+	
+	const url = 'https://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&appid=' + apiKey;
+	const response = await fetch(url);
+	const data = await response.json();
+
+	if(!response.ok) {
+		//throw new Error(data.message || 'Error fetching weather data');
+	}
+	console.log(data);
+	res.json(data);
+} catch (error){
+	console.error(error);
+	res.status(500).json( {error: error.message});
+}	
+});
+
 app.listen(5000); // start Node + Express server on port 5000
