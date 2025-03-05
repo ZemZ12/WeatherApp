@@ -16,11 +16,42 @@
 require('dotenv').config(); // load all environment variables (NECESSARY FOR API KEY)
 // if this doesn't work, use npm install dotenv to install the package
 
+// initialize all schema
 const express = require('express');
+const mongoose = require('mongoose'); // for handling mongoDB application calls.
+const jwt = require('jsonwebtoken'); // for user authentication through use of JSON Web Tokens.
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
+
+// MONGO DB SETUP
+// MONOGO_URI is the connection string to the database, found in the .env file.
+	// 1. if the connection is successful, log it to the console.
+	// 2. Force stop the server connection if the database connection fails. 
+mongoose.connect(process.env.MONGO_URI, {
+	userNewUrlParser: true,
+	useUnifiedTopology: true
+})
+.then(() => console.log('Connected to MongoDB')) // 1.
+.catch(err => { console.error('MongoDB connection error:', err); // 2.
+	process.exit(1);
+});
+
+// define the general user schema for use with MongoDB
+	// This is the data that is sent to the database.
+		// 1. This is so wildly unsafe, it's stored just as plaintext. 
+		// If we want to encrypt it later, we can, but we're just testing it out.
+const userSchema = new mongoose.Schema({
+	username: {type: String, required: true, unique: true},
+	password: {type: String, required: true}, // 1. 
+}) // we could do this is a separate file, something along the lines of models/User.js if you wanted to
+   // we would need to reference it by... const User = require('./models/User.js'); to import it.
+
+// establish base user model to which every user goes to.
+const User = mongoose.model('Users', userSchema);
+
+// Establish middleware (CORS for cross-origin requests, body-parser for JSON parsing)
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -38,11 +69,14 @@ app.use((req, res, next) =>
 	next();
 });
 
+// define the API key as outlined in the .env
 const apiKey = process.env.OPENWEATHERMAP_API_KEY;
 
 // THE FOLLOWING FUNCTION IS UNSAFE, AND IS ONLY TO CHECK TO SEE IF THE APIKEY IS WORKING
+// this is probably worth deleting on deployment :)
 console.log('API key loaded: ', apiKey); 
 
+// Initial test to see if the API key is working.
 app.get('/api/weatherTest', async (req, res, next) => {
 	try{
 	
