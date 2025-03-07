@@ -87,7 +87,7 @@ app.get('/api/weatherTest', async (req, res, next) => {
 });
 
 // server health check on general case
-app.get('/', (req, res) => {
+app.get('/api/', (req, res) => {
 	res.send('Server is running...');
 });
 
