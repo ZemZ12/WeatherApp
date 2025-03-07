@@ -59,6 +59,9 @@ mongoose.connect(process.env.MONGO_URI, {
 // import and use authentication routes from backend>routes>authRoutes.js
 const authRoutes = require('./backend/routes/authRoutes');
 app.use('/api/auth', authRoutes);
+//import the weather routes from the same folder as above.
+const weatherRoutes = require('./backend/routes/weatherRoutes');
+app.use('/api/weather', weatherRoutes);
 
 // define the API key as outlined in the .env
 const apiKey = process.env.OPENWEATHERMAP_API_KEY;
@@ -66,25 +69,6 @@ const apiKey = process.env.OPENWEATHERMAP_API_KEY;
 // THE FOLLOWING FUNCTION IS UNSAFE, AND IS ONLY TO CHECK TO SEE IF THE APIKEY IS WORKING
 // this is probably worth deleting on deployment :)
 console.log('API key loaded: ', apiKey); 
-
-// Initial test to see if the API key is working.
-app.get('/api/weatherTest', async (req, res, next) => {
-	try{
-	
-	const url = 'https://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&appid=' + apiKey;
-	const response = await fetch(url);
-	const data = await response.json();
-
-	if(!response.ok) {
-		//throw new Error(data.message || 'Error fetching weather data');
-	}
-	console.log(data);
-	res.json(data);
-} catch (error){
-	console.error(error);
-	res.status(500).json( {error: error.message});
-}	
-});
 
 // server health check on general case
 app.get('/api/', (req, res) => {
