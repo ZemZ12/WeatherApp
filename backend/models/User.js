@@ -9,4 +9,4 @@ const userSchema = new mongoose.Schema({
     password: {type: String, required: true}, // 1. 
 });
 
-module.exports = mongoose.model('User', userSchema); // export the user schema for use in the server.js file.
+module.exports = mongoose.model('User', userSchema, 'Users'); // export the user schema for use in the server.js file.
