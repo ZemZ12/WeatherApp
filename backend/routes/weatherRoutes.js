@@ -3,6 +3,7 @@ const router = express.Router();
 require('dotenv').config();
 const authenticateToken = require("../middleware/auth");
 const Location = require('../models/Locations');
+const mongoose = require("mongoose");
 
 const apiKey = process.env.OPENWEATHERMAP_API_KEY;
 
@@ -58,6 +59,27 @@ router.get("/getLocations", authenticateToken, async (req, res) => {
       res.status(500).json({ message: "Error fetching locations" });
     }
   });
+
+router.delete("/deleteLocation/:id", authenticateToken, async (req, res) => {
+    const locationId = new mongoose.Types.ObjectId(req.params.Id);
+
+    console.log("Location ID " + locationId);
+    console.log("User ID " + req.user.userId);
+    try {
+        const result = await Location.findOneAndDelete({
+            _id: locationId,
+            userId: req.user.userId
+        });
+
+        if (!result) {
+            return res.status(404).json({ message: "Location not found or unauthorized"});
+        }
+        res.json({ message: "Location Deleted"});
+    } catch (err) {
+        console.error("Error deleting location: ", err);
+        res.status(500).json({ message: "Server error"});
+    }
+});
 
 
 module.exports = router;
