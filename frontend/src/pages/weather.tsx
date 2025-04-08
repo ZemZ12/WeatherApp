@@ -54,7 +54,7 @@ const Weather: React.FC = () => {
     <Box 
       p={8} 
       height="100vh"
-      backgroundImage="url(public/rrt2.jpg)"
+      backgroundImage="url(public/cloudy.jpeg)"
       backgroundSize="cover"
       backgroundPosition="center"
       color="white"
@@ -85,7 +85,8 @@ const Weather: React.FC = () => {
       key={weather.id}
       p={4} 
       bg="blackAlpha.600" 
-      borderRadius="md" 
+      borderRadius="xl"
+      backdropFilter="blur(8px)"
       textAlign="center" 
       position="relative"
       width="300px"
