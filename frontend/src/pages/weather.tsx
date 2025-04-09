@@ -9,12 +9,14 @@ import {
   Text,
   Spacer,
 } from '@chakra-ui/react';
+import { useEffect } from 'react';
 
 interface WeatherData {
   id: number;
+  dbId: string;
   name: string;
   sys: { country: string };
-  main: { temp: number; humidity: number };
+  main: { temp: number; humidity: number; feels_like: number };
   weather: { main: string; description: string }[];
   wind: { speed: number };
   coord: { lat: number; lon: number }; 
@@ -35,6 +37,7 @@ const weatherIcons: Record<string, string> = {
 const Weather: React.FC = () => {
   const [city, setCity] = useState<string>('');
   const [weatherList, setWeatherList] = useState<WeatherData[]>([]);
+  
 
   const getMockWeather = () => {
     const mockData: WeatherData = {
@@ -54,9 +57,134 @@ const Weather: React.FC = () => {
     setCity('');
   };
 
-  const removeWeather = (id: number) => {
-    setWeatherList((prev) => prev.filter((item) => item.id !== id));
+  const mapRealWeather = (apiData: any, dbId: string): WeatherData => {
+    return {
+      id: weatherId++,
+      dbId,
+      name: apiData.name,
+      sys: {
+        country: apiData.sys.country
+      },
+      coord: {
+        lat: apiData.coord.lat,
+        lon: apiData.coord.lon
+      },
+      main: {
+        temp: apiData.main.temp,
+        humidity: apiData.main.humidity,
+        feels_like: apiData.main.feels_like
+      },
+      weather: [
+        {
+          main: apiData.weather[0].main,
+          description: apiData.weather[0].description
+        }
+      ],
+      wind: {
+        speed: apiData.wind.speed
+      }
+    };
   };
+
+  const getCurrentWeather = async () => {
+    const token = localStorage.getItem("token");
+
+    try {
+      //Get the Current Weather
+      const res = await fetch(`https://weatherApp46.xyz/api/weather/currentWeather?city=${encodeURIComponent(city)}`, {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json'
+        },
+      });
+
+      const apiData = await res.json();
+     
+      
+
+      //add Location to DB
+      const addLocationRes = await fetch("https://weatherApp46.xyz/api/weather/addLocation", {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({city:city})
+      });
+
+      const addData = await addLocationRes.json();
+
+      const existing = weatherList.find(
+        (item) => item.name.toLowerCase() == apiData.name.toLowerCase()
+      );
+      if(existing){
+        alert(`${apiData.name} is already in your list.`);
+        return;
+      }
+      const weatherData = mapRealWeather(apiData, addData.bdId);
+      setWeatherList((prev) => [weatherData, ...prev]);
+      setCity('');
+    } catch (error) {
+      console.error("error fetching or saving weather data:", error);
+    }
+  }
+
+  const removeWeather = async (id: number, dbId: string) => {
+    setWeatherList((prev) => prev.filter((item) => item.id !== id));
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await fetch( `https://weatherApp46.xyz/api/weather/deleteLocation/${dbId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const data = await res.json();
+      if(res.ok) {
+        console.log("Deleted from DB: ", data.message);
+      } else {
+        console.error("failed to delete: ", data.message);
+      }
+    } catch (error) {
+      console.error("Error deleting Location: ", error);
+    }
+  };
+
+  const fetchSavedLocations = async () => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await fetch(`https://weatherApp46.xyz/api/weather/getLocations`, {
+        headers: {
+          Authorization : `Bearer ${token}`
+        }
+      });
+      const savedLocations = await res.json();
+
+      for (const location of savedLocations) {
+        const weatherRes = await fetch(`https://weatherApp46.xyz/api/weather/currentweather?city=${encodeURIComponent(location.city)}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const apiData = await weatherRes.json();
+        if(apiData.cod !== 200) continue;
+
+        const weatherData = mapRealWeather(apiData, location._id);
+        setWeatherList((prev) => [weatherData, ...prev]);
+      }
+    } catch (error) {
+      console.error("Error loading saved locations:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSavedLocations();
+  }, []);  
 
   return (
     <Box
@@ -85,7 +213,7 @@ const Weather: React.FC = () => {
           value={city}
           onChange={(e) => setCity(e.target.value)}
         />
-        <Button colorScheme="blue" onClick={getMockWeather}>
+        <Button colorScheme="blue" onClick={getCurrentWeather}>
           Get Weather
         </Button>
       </VStack>
@@ -120,7 +248,7 @@ const Weather: React.FC = () => {
         border="none"
         color="white"
         _hover={{ color: 'red.300', transform: 'scale(1.2)' }}
-        onClick={() => removeWeather(weather.id)}
+        onClick={() => removeWeather(weather.id, weather.dbId)}
         cursor="pointer"
       >
         ×
@@ -130,7 +258,7 @@ const Weather: React.FC = () => {
         {weather.name}, {weather.sys.country}
       </Text>
       <Text fontSize="2xl">
-        {Math.round(weather.main.temp)}°C
+        {Math.round(weather.main.temp)}°F
       </Text>
       <Text>
         {weather.weather[0].main} - {weather.weather[0].description}
@@ -198,7 +326,7 @@ const Weather: React.FC = () => {
     mt={4}
     mb={2}
   >
-    {Math.round(weather.main.temp)}°C
+    {Math.round(weather.main.temp)}°F
   </Text>
 
   {/* Weather Icon */}
@@ -208,7 +336,7 @@ const Weather: React.FC = () => {
 
   {/* Feels Like */}
   <Box position="absolute" bottom="12px" left="24px" fontSize="md">
-    Feels like: {Math.round(weather.main.temp + 2)}°C
+    Feels like: {Math.round(weather.main.feels_like)}°F
   </Box>
 </Flex>
     </Flex>

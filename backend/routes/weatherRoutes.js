@@ -25,8 +25,8 @@ router.get('/weeklyForcast', async (req, res) => {
 
 router.get('/currentWeather', async (req, res) => {
     try {
-        const {city} = req.body;
-        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`;
+        
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(req.query.city)}&appid=${apiKey}&units=imperial`;
         const response = await fetch(url);
         const data = await response.json();
         
@@ -41,9 +41,12 @@ router.post("/addLocation", authenticateToken, async (req, res) => {
     try {
         const {city} = req.body;
         const userId = req.user.userId;
-        const newLocation = new Location({city, userId});
-        await newLocation.save();
-        res.status(201).json({ message: "Location Saved"});
+        const updatedLocation = await Location.findOneAndUpdate(
+            {city, userId},
+            {city, userId},
+            {upsert: true, new: true}
+        );
+        res.status(201).json({ message: "Location Saved", dbId: updatedLocation._id});
     } catch (err){
         res.status(500).json({message : "Error Saving Location"});
     }
@@ -61,7 +64,7 @@ router.get("/getLocations", authenticateToken, async (req, res) => {
   });
 
 router.delete("/deleteLocation/:id", authenticateToken, async (req, res) => {
-    const locationId = new mongoose.Types.ObjectId(req.params.Id);
+    const locationId = new mongoose.Types.ObjectId(req.params.id);
 
     console.log("Location ID " + locationId);
     console.log("User ID " + req.user.userId);
