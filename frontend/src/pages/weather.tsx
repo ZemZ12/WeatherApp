@@ -28,7 +28,7 @@ let weatherId = 0;
 
 const weatherIcons: Record<string, string> = {
   Sunny: '☀️',
-  Cloudy: '☁️',
+  Clouds: '☁️',
   Rain: '🌧️',
   Thunderstorm: '⛈️',
   Snowy: '❄️',
@@ -44,25 +44,6 @@ const Weather: React.FC = () => {
   const handleSignOut = () => {
     localStorage.removeItem('token'); 
     navigate('/'); 
-  };
-
-
-  const getMockWeather = () => {
-    const mockData: WeatherData = {
-      id: weatherId++, // unique ID for removal
-      name: city || `City ${weatherId}`,
-      sys: { country: 'US' },
-      coord: { lat: 30.3322, lon: -81.6557 },
-      main: {
-        temp: 26 + Math.floor(Math.random() * 10),
-        humidity: 60 + Math.floor(Math.random() * 20),
-      },
-      weather: [{ main: 'Clear', description: '' }],
-      wind: { speed: 3.6 + Math.random() * 2 },
-    };
-
-    setWeatherList((prev) => [mockData, ...prev]);
-    setCity('');
   };
 
   const mapRealWeather = (apiData: any, dbId: string): WeatherData => {
