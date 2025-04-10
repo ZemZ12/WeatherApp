@@ -99,6 +99,7 @@ const Register = () => {
             </FormControl>
 
             <Button type="submit" colorScheme="teal" width="full">Register</Button>
+        
           </Stack>
         </form>
       </Box>
