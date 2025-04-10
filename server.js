@@ -13,69 +13,45 @@
 	DO NOT HARDCODE THE API KEY INTO YOUR CODE.
 */
 
-require('dotenv').config(); // load all environment variables (NECESSARY FOR API KEY)
-// if this doesn't work, use npm install dotenv to install the package
+require('dotenv').config(); // Load environment variables
 
-// initialize all schema
 const express = require('express');
-const mongoose = require('mongoose'); // for handling mongoDB application calls.
-const jwt = require('jsonwebtoken'); // for user authentication through use of JSON Web Tokens.
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
 
-// Establish middleware (CORS for cross-origin requests, body-parser for JSON parsing)
+// Enable CORS for all origins
 app.use(cors());
+
+// Parse JSON bodies
 app.use(bodyParser.json());
 
-app.use((req, res, next) =>
-{
-	res.setHeader('Access-Control-Allow-Origin', '*');
-	res.setHeader(
-		'Access-Control-Allow-Headers',
-		'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-	);
-	res.setHeader(
-		'Access-Control-Allow-Methods',
-		'GET, POST, PATCH, DELETE, OPTIONS'
-	);
-	next();
-});
-
-// MONGO DB SETUP
-// MONOGO_URI is the connection string to the database, found in the .env file.
-	// 1. if the connection is successful, log it to the console.
-	// 2. Force stop the server connection if the database connection fails. 
+// MongoDB setup
 mongoose.connect(process.env.MONGO_URI, {
-	useNewUrlParser: true,
-	useUnifiedTopology: true
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
 })
-.then(() => console.log('Connected to MongoDB')) // 1.
-.catch(err => { console.error('MongoDB connection error:', err); // 2.
-	// process.exit(1);
-});
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((err) => {
+        console.error('MongoDB connection error:', err);
+        // process.exit(1);
+    });
 
-// import and use authentication routes from backend>routes>authRoutes.js
+// Import routes
 const authRoutes = require('./backend/routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
-//import the weather routes from the same folder as above.
 const weatherRoutes = require('./backend/routes/weatherRoutes');
 app.use('/api/weather', weatherRoutes);
 
-// define the API key as outlined in the .env
-const apiKey = process.env.OPENWEATHERMAP_API_KEY;
-
-// THE FOLLOWING FUNCTION IS UNSAFE, AND IS ONLY TO CHECK TO SEE IF THE APIKEY IS WORKING
-// this is probably worth deleting on deployment :)
-console.log('API key loaded: ', apiKey); 
-
-// server health check on general case
+// Server health check
 app.get('/api/', (req, res) => {
-	res.send('Server is running...');
+    res.send('Server is running...');
 });
 
+// Start the server
 app.listen(5000, () => {
-	console.log('Server is running on port 5000 Success');
-}); // start Node + Express server on port 5000
+    console.log('Server is running on port 5000');
+});
