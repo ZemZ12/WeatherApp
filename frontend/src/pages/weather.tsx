@@ -134,6 +134,11 @@ const Weather: React.FC = () => {
 
     const token = localStorage.getItem("token");
 
+    if(dbId == "current-location") {
+      setWeatherList((prev) => prev.filter((item) => item.id !==id));
+      return;
+    }
+
     try {
       const res = await fetch( `https://weatherApp46.xyz/api/weather/deleteLocation/${dbId}`, {
         method: "DELETE",
@@ -185,6 +190,71 @@ const Weather: React.FC = () => {
   useEffect(() => {
     fetchSavedLocations();
   }, []);  
+
+  useEffect(() => {
+    const fetchUserLocationWeather = async () => {
+      if (!("geolocation" in navigator)) {
+        console.error("Geolocation is not supported by this browser.");
+        return;
+      }
+  
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+  
+          try {
+            
+  
+            // 🔁 Step 1: Reverse geocode lat/lon to get city name
+            const geoRes = await fetch(`https://weatherApp46.xyz/api/weather/reverseGeocoding`,{
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                }, body: JSON.stringify({lon:lon, lat:lat})
+              }
+            );
+  
+            const geoData = await geoRes.json();
+            const city = geoData[0]?.name;
+  
+            if (!city) {
+              console.warn("Could not determine city name from location.");
+              return;
+            }
+  
+            // 🔁 Step 2: Get weather for that city
+            const weatherRes = await fetch(`https://weatherApp46.xyz/api/weather/currentWeather?city=${encodeURIComponent(city)}`, {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+  
+            const weatherData = await weatherRes.json();
+            if (weatherData.cod !== 200) {
+              console.warn("Could not get weather for current location.");
+              return;
+            }
+  
+            // ✅ Step 3: Add the weather to the top of the list
+            const weatherObject = mapRealWeather(weatherData, "current-location"); // use special dbId
+            setWeatherList((prev) => [weatherObject, ...prev]);
+  
+          } catch (error) {
+            console.error("Error retrieving weather for user location:", error);
+          }
+        },
+        (error) => {
+          console.error("Error getting user location:", error);
+        }
+      );
+    };
+  
+    fetchUserLocationWeather();
+  }, []);
+
+
 
   return (
     <Box
