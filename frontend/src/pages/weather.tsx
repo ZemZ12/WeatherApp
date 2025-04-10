@@ -27,11 +27,11 @@ interface WeatherData {
 let weatherId = 0;
 
 const weatherIcons: Record<string, string> = {
-  Clear: '☀️',
+  Sunny: '☀️',
   Cloudy: '☁️',
   Rain: '🌧️',
   Thunderstorm: '⛈️',
-  Snow: '❄️',
+  Snowy: '❄️',
   Mist: '🌫️',
   Fog: '🌫️',
 };
@@ -41,12 +41,11 @@ const Weather: React.FC = () => {
   const [weatherList, setWeatherList] = useState<WeatherData[]>([]);
   const navigate = useNavigate();
 
-
   const handleSignOut = () => {
     localStorage.removeItem('token'); 
     navigate('/'); 
   };
-  
+
 
   const getMockWeather = () => {
     const mockData: WeatherData = {
