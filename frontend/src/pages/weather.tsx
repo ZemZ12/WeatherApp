@@ -28,7 +28,7 @@ let weatherId = 0;
 
 const weatherIcons: Record<string, string> = {
   Sunny: '☀️',
-  Cloudy: '☁️',
+  Clouds: '☁️',
   Rain: '🌧️',
   Thunderstorm: '⛈️',
   Snowy: '❄️',

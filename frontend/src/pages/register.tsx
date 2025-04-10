@@ -58,7 +58,7 @@ const Register = () => {
     if (!validateForm()) return;
 
     try {
-      const response = await fetch("http://localhost:5000/register", {
+      const response = await fetch("https://weatherApp46.xyz/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, password: formData.password }),

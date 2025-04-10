@@ -8,15 +8,16 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleLogin = async () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
   
     try {
-      const response = await fetch('https://your-api-url.com/api/login', {
+      const response = await fetch('https://weatherApp46.xyz/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ username:email, password:password })
       });
       const data = await response.json();
 
