@@ -214,7 +214,6 @@ const Weather: React.FC = () => {
           try {
             
   
-            // 🔁 Step 1: Reverse geocode lat/lon to get city name
             const geoRes = await fetch(`https://weatherApp46.xyz/api/weather/reverseGeocoding`,{
                 method: 'POST',
                 headers: {
@@ -231,7 +230,6 @@ const Weather: React.FC = () => {
               return;
             }
   
-            // 🔁 Step 2: Get weather for that city
             const weatherRes = await fetch(`https://weatherApp46.xyz/api/weather/currentWeather?city=${encodeURIComponent(city)}`, {
                 headers: {
                   'Content-Type': 'application/json',
@@ -245,7 +243,6 @@ const Weather: React.FC = () => {
               return;
             }
   
-            // ✅ Step 3: Add the weather to the top of the list
             const weatherObject = mapRealWeather(weatherData, "current-location"); // use special dbId
             setWeatherList((prev) => [weatherObject, ...prev]);
   
