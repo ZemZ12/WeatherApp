@@ -27,11 +27,11 @@ interface WeatherData {
 let weatherId = 0;
 
 const weatherIcons: Record<string, string> = {
-  Sunny: '☀️',
-  Clouds: '☁️',
+  Clear: '☀️',
+  Cloudy: '☁️',
   Rain: '🌧️',
   Thunderstorm: '⛈️',
-  Snowy: '❄️',
+  Snow: '❄️',
   Mist: '🌫️',
   Fog: '🌫️',
 };
@@ -110,7 +110,7 @@ const Weather: React.FC = () => {
         alert(`${apiData.name} is already in your list.`);
         return;
       }
-      const weatherData = mapRealWeather(apiData, addData.bdId);
+      const weatherData = mapRealWeather(apiData, addData.dbId);
       setWeatherList((prev) => [weatherData, ...prev]);
       setCity('');
     } catch (error) {
