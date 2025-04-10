@@ -27,11 +27,11 @@ interface WeatherData {
 let weatherId = 0;
 
 const weatherIcons: Record<string, string> = {
-  Sunny: '☀️',
+  Clear: '☀️',
   Cloudy: '☁️',
   Rain: '🌧️',
   Thunderstorm: '⛈️',
-  Snowy: '❄️',
+  Snow: '❄️',
   Mist: '🌫️',
   Fog: '🌫️',
 };
@@ -41,29 +41,30 @@ const Weather: React.FC = () => {
   const [weatherList, setWeatherList] = useState<WeatherData[]>([]);
   const navigate = useNavigate();
 
+
   const handleSignOut = () => {
     localStorage.removeItem('token'); 
     navigate('/'); 
   };
+  
 
+  // const getMockWeather = () => {
+  //   const mockData: WeatherData = {
+  //     id: weatherId++, // unique ID for removal
+  //     name: city || `City ${weatherId}`,
+  //     sys: { country: 'US' },
+  //     coord: { lat: 30.3322, lon: -81.6557 },
+  //     main: {
+  //       temp: 26 + Math.floor(Math.random() * 10),
+  //       humidity: 60 + Math.floor(Math.random() * 20),
+  //     },
+  //     weather: [{ main: 'Clear', description: '' }],
+  //     wind: { speed: 3.6 + Math.random() * 2 },
+  //   };
 
-  const getMockWeather = () => {
-    const mockData: WeatherData = {
-      id: weatherId++, // unique ID for removal
-      name: city || `City ${weatherId}`,
-      sys: { country: 'US' },
-      coord: { lat: 30.3322, lon: -81.6557 },
-      main: {
-        temp: 26 + Math.floor(Math.random() * 10),
-        humidity: 60 + Math.floor(Math.random() * 20),
-      },
-      weather: [{ main: 'Clear', description: '' }],
-      wind: { speed: 3.6 + Math.random() * 2 },
-    };
-
-    setWeatherList((prev) => [mockData, ...prev]);
-    setCity('');
-  };
+  //   setWeatherList((prev) => [mockData, ...prev]);
+  //   setCity('');
+  // };
 
   const mapRealWeather = (apiData: any, dbId: string): WeatherData => {
     return {
@@ -97,6 +98,11 @@ const Weather: React.FC = () => {
   const getCurrentWeather = async () => {
     const token = localStorage.getItem("token");
 
+    if(city == null) {
+      alert("Please enter a City Name.");
+      return;
+    }
+
     try {
       //Get the Current Weather
       const res = await fetch(`https://weatherApp46.xyz/api/weather/currentWeather?city=${encodeURIComponent(city)}`, {
@@ -129,7 +135,7 @@ const Weather: React.FC = () => {
         alert(`${apiData.name} is already in your list.`);
         return;
       }
-      const weatherData = mapRealWeather(apiData, addData.bdId);
+      const weatherData = mapRealWeather(apiData, addData.dbId);
       setWeatherList((prev) => [weatherData, ...prev]);
       setCity('');
     } catch (error) {
@@ -213,7 +219,6 @@ const Weather: React.FC = () => {
   
           try {
             
-  
             const geoRes = await fetch(`https://weatherApp46.xyz/api/weather/reverseGeocoding`,{
                 method: 'POST',
                 headers: {
@@ -230,6 +235,7 @@ const Weather: React.FC = () => {
               return;
             }
   
+           
             const weatherRes = await fetch(`https://weatherApp46.xyz/api/weather/currentWeather?city=${encodeURIComponent(city)}`, {
                 headers: {
                   'Content-Type': 'application/json',
@@ -243,6 +249,7 @@ const Weather: React.FC = () => {
               return;
             }
   
+            
             const weatherObject = mapRealWeather(weatherData, "current-location"); // use special dbId
             setWeatherList((prev) => [weatherObject, ...prev]);
   
