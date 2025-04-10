@@ -10,6 +10,8 @@ import {
   Spacer,
 } from '@chakra-ui/react';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 interface WeatherData {
   id: number;
@@ -37,6 +39,13 @@ const weatherIcons: Record<string, string> = {
 const Weather: React.FC = () => {
   const [city, setCity] = useState<string>('');
   const [weatherList, setWeatherList] = useState<WeatherData[]>([]);
+  const navigate = useNavigate();
+
+
+  const handleSignOut = () => {
+    localStorage.removeItem('token'); 
+    navigate('/'); 
+  };
   
 
   const getMockWeather = () => {
@@ -270,7 +279,7 @@ const Weather: React.FC = () => {
       <Flex mb={6} align="center">
         <Heading>WeatherX</Heading>
         <Spacer />
-        <Button colorScheme="red" variant="outline">
+        <Button colorScheme="red" variant="outline" onClick={handleSignOut}>
           Sign Out
         </Button>
       </Flex>
