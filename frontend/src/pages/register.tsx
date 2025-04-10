@@ -5,6 +5,9 @@ import {
   Input,
   Heading,
   Stack,
+  Alert,
+  AlertDescription,
+  AlertTitle,
 } from "@chakra-ui/react";
 
 import {
@@ -58,7 +61,7 @@ const Register = () => {
     if (!validateForm()) return;
 
     try {
-      const response = await fetch("https://weatherApp46.xyz/api/auth/register", {
+      const response = await fetch("https://weatherApp46.xyz/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, password: formData.password }),
@@ -76,10 +79,20 @@ const Register = () => {
     <Box height="100vh" width="100vw" backgroundImage="url(/rrt2.jpg)" backgroundSize="cover" display="flex" justifyContent="center" alignItems="center">
       <Box maxW="md" mx="auto" width="100%" backdropFilter="blur(25px)" p={6} borderWidth={1} borderRadius="md">
         <Heading as="h2" color="Black" size="lg" mb={6}>Register</Heading>
-        {message && <Box color="green.500" mb={4}>{message}</Box>}
+        {message && (
+              <Alert.Root status={message === "Registration Successful!" ? "success" : "error"} borderRadius="md" mb={4}>
+                <AlertTitle mr={2}>
+                  {message === "Registration Successful!" ? "Success!" : "Error!"}
+                </AlertTitle>
+                <AlertDescription>
+                  {message}
+                </AlertDescription>
+              </Alert.Root>
+                    )}
 
         <form onSubmit={handleSubmit}>
           <Stack>
+
             <FormControl isInvalid={!!errors.email}>
               <FormLabel>Email</FormLabel>
               <Input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" />
@@ -107,3 +120,4 @@ const Register = () => {
 };
 
 export default Register;
+
