@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 // User Registration Route
 // Because we import ../models/user, don't need to import anything here 

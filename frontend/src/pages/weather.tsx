@@ -27,11 +27,11 @@ interface WeatherData {
 let weatherId = 0;
 
 const weatherIcons: Record<string, string> = {
-  Sunny: '☀️',
+  Clear: '☀️',
   Clouds: '☁️',
   Rain: '🌧️',
   Thunderstorm: '⛈️',
-  Snowy: '❄️',
+  Snow: '❄️',
   Mist: '🌫️',
   Fog: '🌫️',
 };
@@ -80,7 +80,7 @@ const Weather: React.FC = () => {
 
     try {
       //Get the Current Weather
-      const res = await fetch(`https://weatherApp46.xyz/api/weather/currentWeather?city=${encodeURIComponent(city)}`, {
+      const res = await fetch(`/api/weather/currentWeather?city=${encodeURIComponent(city)}`, {
         method: 'GET',
         headers: {
           'Content-type': 'application/json'
@@ -92,7 +92,7 @@ const Weather: React.FC = () => {
       
 
       //add Location to DB
-      const addLocationRes = await fetch("https://weatherApp46.xyz/api/weather/addLocation", {
+      const addLocationRes = await fetch("/api/weather/addLocation", {
         method: 'POST',
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +110,7 @@ const Weather: React.FC = () => {
         alert(`${apiData.name} is already in your list.`);
         return;
       }
-      const weatherData = mapRealWeather(apiData, addData.bdId);
+      const weatherData = mapRealWeather(apiData, addData.dbId);
       setWeatherList((prev) => [weatherData, ...prev]);
       setCity('');
     } catch (error) {
@@ -129,7 +129,7 @@ const Weather: React.FC = () => {
     }
 
     try {
-      const res = await fetch( `https://weatherApp46.xyz/api/weather/deleteLocation/${dbId}`, {
+      const res = await fetch( `/api/weather/deleteLocation/${dbId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`
@@ -151,7 +151,7 @@ const Weather: React.FC = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch(`https://weatherApp46.xyz/api/weather/getLocations`, {
+      const res = await fetch(`/api/weather/getLocations`, {
         headers: {
           Authorization : `Bearer ${token}`
         }
@@ -159,7 +159,7 @@ const Weather: React.FC = () => {
       const savedLocations = await res.json();
 
       for (const location of savedLocations) {
-        const weatherRes = await fetch(`https://weatherApp46.xyz/api/weather/currentweather?city=${encodeURIComponent(location.city)}`, {
+        const weatherRes = await fetch(`/api/weather/currentweather?city=${encodeURIComponent(location.city)}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -194,8 +194,7 @@ const Weather: React.FC = () => {
   
           try {
             
-  
-            const geoRes = await fetch(`https://weatherApp46.xyz/api/weather/reverseGeocoding`,{
+            const geoRes = await fetch(`/api/weather/reverseGeocoding`,{
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -211,7 +210,8 @@ const Weather: React.FC = () => {
               return;
             }
   
-            const weatherRes = await fetch(`https://weatherApp46.xyz/api/weather/currentWeather?city=${encodeURIComponent(city)}`, {
+           
+            const weatherRes = await fetch(`/api/weather/currentWeather?city=${encodeURIComponent(city)}`, {
                 headers: {
                   'Content-Type': 'application/json',
                 },
