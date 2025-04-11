@@ -8,8 +8,9 @@
  Then run `npm run dev` in the command prompt that is pointing to the frontend folder. This will start the website's frontend allowing you to access WeatherX through localhost.<br>
 
 ## AI CITATION
- During the development of the backend we used chatGPT to assist in the understanding, development, and most importantly debugging of the program. ChatGPT was used mostly as a rubber duck of sorts which helped <
- assure us that we were on the right path. Some of the prompts included:
+ During the development of the backend we used chatGPT to assist in the understanding, development, and most importantly debugging of the program. ChatGPT was used mostly as a rubber duck of sorts which helped 
+ assure us that we were on the right path. <br>
+ Some of the prompts included:
  ```
   Does this implementation of navigate sucessfuly redirect the user back to the home page of the website?
   Do you know of the mongoose command .save() and how do I point the save command to go to specific tables?
