@@ -15,6 +15,7 @@ import {
   FormLabel,
   FormErrorMessage,
 } from "@chakra-ui/form-control";
+import { useNavigate } from 'react-router-dom';
 
 // Define type for form data
 interface FormData {
@@ -29,6 +30,8 @@ interface FormErrors {
   password?: string;
   confirmPassword?: string;
 }
+
+  const navigate = useNavigate();
 
 const Register = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -68,7 +71,10 @@ const Register = () => {
       });
 
       const data = await response.json();
-      if (response.ok) setMessage("Registration Successful!");
+      if (response.ok) {
+        setMessage("Registration Successful!");
+        navigate('/');
+      }
       else setMessage(data.error);
     } catch (error) {
       setMessage("Server error. Try again later.");
