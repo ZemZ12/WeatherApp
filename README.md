@@ -7,7 +7,7 @@
  Now please run `npm start` in the command prompt that is pointing to the base directory. This will start the backend processes.<br>
  Then run `npm run dev` in the command prompt that is pointing to the frontend folder. This will start the website's frontend allowing you to access WeatherX through localhost.<br>
 
-## AI CITATION
+## AI CITATION BACKEND
  During the development of the backend we used chatGPT to assist in the understanding, development, and most importantly debugging of the program. ChatGPT was used mostly as a rubber duck of sorts which helped 
  assure us that we were on the right path. <br>
  Some of the prompts included:
@@ -20,3 +20,12 @@
 ```
  ChatGPT was used to help grow our understanding of how backend development works and how to facilitate the connection between backend and frontend. As a result it was used in many of the backend files as we 
  encountered new problems that we had not encountered previously. We used chatGPT as a bouncing board to make sure that our logic was on the right track _before_ writing the APIs and connections. 
+## AI CITATION FRONTEND
+In the Frontend we used ChatGPT to assist us in our development process and debugging issues that comes up during the development.
+Some of the Prompts that we used in ChatGPT are:
+```
+1. How do I display form validation errors below each input using Chakra UI and React Hook Form?
+2. How am i to add a login logic (api)
+3. Give me an example of a Chakra UI Alert component for form submission success/failure
+4. How do I make a Chakra UI Grid layout responsive across mobile, tablet, and desktop?
+```
