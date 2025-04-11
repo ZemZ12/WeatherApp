@@ -31,8 +31,6 @@ interface FormErrors {
   confirmPassword?: string;
 }
 
-  const navigate = useNavigate();
-
 const Register = () => {
   const [formData, setFormData] = useState<FormData>({
     email: "",
@@ -42,6 +40,7 @@ const Register = () => {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
